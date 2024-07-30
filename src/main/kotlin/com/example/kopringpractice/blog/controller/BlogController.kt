@@ -5,16 +5,21 @@ import com.example.kopringpractice.blog.service.BlogService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RequestMapping("/api/blog")
 @RestController
 class BlogController(
-    val blogService: BlogService
+    private val blogService: BlogService
 ) {
     @GetMapping
-    fun search(@RequestBody blogDto: BlogDto): String? {
-        val result = blogService.searchKakao(blogDto)
-        return result
+    fun search(
+        @RequestParam query: String,
+        @RequestParam sort: String,
+        @RequestParam page: Int,
+        @RequestParam size: Int): String? {
+        val blogDto = BlogDto(query, sort, page, size)
+        return blogService.searchKakao(blogDto)
     }
 }
