@@ -1,6 +1,0 @@
-CREATE TABLE WORDCOUNT (
-    word VARCHAR(255) NOT NULL,
-    cnt INT,
-    PRIMARY KEY (word)
-);
-
