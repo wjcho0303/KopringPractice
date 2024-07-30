@@ -1,6 +1,8 @@
 package com.example.kopringpractice.blog.service
 
 import com.example.kopringpractice.blog.dto.BlogDto
+import com.example.kopringpractice.blog.entity.Wordcount
+import com.example.kopringpractice.blog.repository.WordRepository
 import com.example.kopringpractice.core.exception.InvalidInputException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -9,8 +11,9 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 
 @Service
-class BlogService {
-
+class BlogService(
+    val wordRepository: WordRepository
+) {
     fun searchKakao(blogDto: BlogDto): String? {
         val messageList = mutableListOf<ExceptionMessage>()
 
@@ -52,8 +55,16 @@ class BlogService {
 
         val result = response.block()
 
+        val lowQuery: String = blogDto.query.lowercase()
+        val word: Wordcount = wordRepository.findById(lowQuery).orElse(Wordcount(lowQuery))
+        word.cnt++
+
+        wordRepository.save(word)
+
         return result
     }
+
+    fun searchWordRank(): List<Wordcount> = wordRepository.findTop100ByOrderByCntDesc()
 }
 
 private enum class ExceptionMessage(val message: String) {

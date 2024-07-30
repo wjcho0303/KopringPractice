@@ -1,6 +1,7 @@
 package com.example.kopringpractice.blog.controller
 
 import com.example.kopringpractice.blog.dto.BlogDto
+import com.example.kopringpractice.blog.entity.Wordcount
 import com.example.kopringpractice.blog.service.BlogService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -28,4 +29,7 @@ class BlogController(
         @RequestBody blogDto: BlogDto): String? {
         return blogService.searchKakao(blogDto)
     }
+
+    @GetMapping("/rank")
+    fun searchWordRank(): List<Wordcount> = blogService.searchWordRank()
 }
