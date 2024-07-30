@@ -5,4 +5,4 @@ data class BlogDto (
     val sort: String? = "",
     val page: Int? = -1,
     val size: Int? = -1
-    )
+)
