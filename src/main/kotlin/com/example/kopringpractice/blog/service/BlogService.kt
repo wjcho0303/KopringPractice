@@ -1,6 +1,7 @@
 package com.example.kopringpractice.blog.service
 
 import com.example.kopringpractice.blog.dto.BlogDto
+import com.example.kopringpractice.core.exception.InvalidInputException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
@@ -11,6 +12,26 @@ import org.springframework.web.reactive.function.client.bodyToMono
 class BlogService {
 
     fun searchKakao(blogDto: BlogDto): String? {
+        val messageList = mutableListOf<ExceptionMessage>()
+
+        if (blogDto.query.trim().isEmpty()) {
+            messageList.add(ExceptionMessage.EMPTY_QUERY)
+        }
+
+        if (blogDto.sort.trim() !in arrayOf("accuracy", "recency")) {
+            messageList.add(ExceptionMessage.INACCURATE_SORT)
+        }
+
+        when {
+            blogDto.page < 1 -> messageList.add(ExceptionMessage.LESS_THAN_MIN)
+            blogDto.size > 50 -> messageList.add(ExceptionMessage.MORE_THAN_MAX)
+        }
+
+        if (messageList.isNotEmpty()) {
+            val message = messageList.joinToString { it.message }
+            throw InvalidInputException(message)
+        }
+
         val webClient = WebClient
             .builder()
             .baseUrl("https://dapi.kakao.com")
@@ -33,4 +54,11 @@ class BlogService {
 
         return result
     }
+}
+
+private enum class ExceptionMessage(val message: String) {
+    EMPTY_QUERY("query parameter required"),
+    INACCURATE_SORT("sort must be accuracy or recency"),
+    LESS_THAN_MIN("page is less than min"),
+    MORE_THAN_MAX("page is more than max")
 }

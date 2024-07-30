@@ -13,13 +13,19 @@ import org.springframework.web.bind.annotation.RestController
 class BlogController(
     private val blogService: BlogService
 ) {
+//    @GetMapping
+//    fun search(
+//        @RequestParam query: String,
+//        @RequestParam sort: String,
+//        @RequestParam page: Int,
+//        @RequestParam size: Int): String? {
+//        val blogDto = BlogDto(query, sort, page, size)
+//        return blogService.searchKakao(blogDto)
+//    }
+
     @GetMapping
     fun search(
-        @RequestParam query: String,
-        @RequestParam sort: String,
-        @RequestParam page: Int,
-        @RequestParam size: Int): String? {
-        val blogDto = BlogDto(query, sort, page, size)
+        @RequestBody blogDto: BlogDto): String? {
         return blogService.searchKakao(blogDto)
     }
 }
